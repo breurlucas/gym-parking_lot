@@ -38,7 +38,7 @@ class ParkingLotEnv(discrete.DiscreteEnv):
     row_limit = rows - 1
     col_limit = columns - 1
     states_arr = np.zeros(states) 
-    actions = 5
+    actions = 4
 
     P = {
         state: {action: [] for action in range(actions)}
@@ -52,45 +52,45 @@ class ParkingLotEnv(discrete.DiscreteEnv):
         state = self.encode(row, col)
         if self.desc[1 + row, 2 * col + 1] != b"X": # Did not spawn at owner
           states_arr[state] += 1
-          for action in range(actions):
-            # defaults
-              new_row, new_col= row, col
-              done = False
+        for action in range(actions):
+          # defaults
+          new_row, new_col= row, col
+          done = False
 
-              # South
-              if action == 0:
-                  new_row = min(row + 1, row_limit)
+          # South
+          if action == 0:
+              new_row = min(row + 1, row_limit)
 
-              # North
-              if action == 1:
-                  new_row = max(row - 1, 0)
+          # North
+          if action == 1:
+              new_row = max(row - 1, 0)
 
-              # East
-              if action == 2:
-                  new_col = min(col + 1, col_limit)
+          # East
+          if action == 2:
+              new_col = min(col + 1, col_limit)
 
-              # West
-              if action == 3:
-                  new_col = max(col - 1, 0)
+          # West
+          if action == 3:
+              new_col = max(col - 1, 0)
 
-              if self.desc[1 + new_row, 2 * new_col + 1] == b"C": # Hit car
-                reward = -100
-              elif self.desc[1 + new_row, 2 * new_col + 1] == b"P": # Hit Person
-                reward = -1000
-              elif self.desc[1 + new_row, 2 * new_col + 1] == b"X": # Arrived at owner
-                reward = 500
-                done = True
-              else:
-                reward = 100 # Blank space
+          if self.desc[1 + new_row, 2 * new_col + 1] == b"C": # Hit car
+            reward = -100
+          elif self.desc[1 + new_row, 2 * new_col + 1] == b"P": # Hit Person
+            reward = -1000
+          elif self.desc[1 + new_row, 2 * new_col + 1] == b"X": # Arrived at owner
+            reward = 500
+            done = True
+          else:
+            reward = 100 # Blank space
 
-              new_state = self.encode(new_row, new_col)
+          new_state = self.encode(new_row, new_col)
 
-              P[state][action].append((1.0, new_state, reward, done))
+          P[state][action].append((1.0, new_state, reward, done))
 
-        states_arr /= states_arr.sum()
-        discrete.DiscreteEnv.__init__(
-            self, states, actions, P, states_arr
-        )
+    states_arr /= states_arr.sum()
+    discrete.DiscreteEnv.__init__(
+        self, states, actions, P, states_arr
+    )
 
 
   def encode(self, car_row, car_col):
