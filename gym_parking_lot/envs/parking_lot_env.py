@@ -47,7 +47,6 @@ class ParkingLotEnv(discrete.DiscreteEnv):
         for state in range(states)
     }
 
-    
     for row in range(rows):
       for col in range(columns):
         # Encode new lot state
