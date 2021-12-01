@@ -27,6 +27,8 @@ MAP = [
 
 class ParkingLotEnv(discrete.DiscreteEnv):
 
+  metadata = {"render.modes": ["human", "ansi"]}
+  
   def __init__(self):
     
     #  Map description used for position evaluation
@@ -97,13 +99,10 @@ class ParkingLotEnv(discrete.DiscreteEnv):
       i = car_row
       i *= 10
       i += car_col
-      i *= 10
       return i
 
   def decode(self, i):
         out = []
-        out.append(i % 10)
-        i = i // 10
         out.append(i % 10)
         i = i // 10
         out.append(i)
